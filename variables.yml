@@ -1,0 +1,14 @@
+host:
+  type: string
+  description: dcgw IP
+  default: "<ip here>"
+  
+username:
+  type: string
+  description: dcgw username
+  default: "<username here>"
+
+password:
+  type: string
+  description: dcgw password
+  default: "<password here>"
