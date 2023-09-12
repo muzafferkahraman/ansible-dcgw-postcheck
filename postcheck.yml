@@ -1,4 +1,4 @@
----
+Z---
 - hosts: localhost
   connection: network_cli
   gather_facts: true
@@ -48,9 +48,9 @@
         content: "{{ temp_var.stdout_lines | map('regex_replace', '^[\\-f]', '') | list | join('\n') }}"
         dest:  /root/{{ filename }}
     - name: Send the output to the file server
-      # shell: smbclient //10.85.17.120/share -c "put /root/conf"
-      # shell: scp /root/{{ filename }} muzo@10.85.17.114:/home/muzo 
-      shell: curl -T /root/{{ filename }}  http://10.85.18.183:7070/ciq_files/muzo/upload/
+      # shell: smbclient //<samba server ip here>/share -c "put /root/conf"
+      # shell: scp /root/{{ filename }} muzo@<server ip here>:/home/muzo 
+      shell: curl -T /root/{{ filename }}  http://<file server ip here>:7070/ciq_files/muzo/upload/
 
 
 
