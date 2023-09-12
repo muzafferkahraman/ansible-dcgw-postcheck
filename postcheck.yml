@@ -1,0 +1,57 @@
+---
+- hosts: localhost
+  connection: network_cli
+  gather_facts: true
+
+  tasks:
+    - name: Read the Input File
+      include_vars:
+        file: variables.yml
+        name: invent_vars
+
+    - name: Assign the Connection Info
+      add_host:
+        hostname: "{{ invent_vars.host.default }}"
+        groups: dcgw
+        ansible_user: "{{ invent_vars.username.default }}"
+        ansible_password: "{{ invent_vars.password.default }}"
+      no_log: False
+
+    - name: Wait 10 secs
+      pause: seconds=10  prompt=no
+
+- hosts: dcgw
+  gather_facts: false
+  connection: network_cli
+  become: yes
+  become_method: enable
+
+  vars:
+    ansible_network_os: nokia.sros.classic
+
+  tasks:
+    - name: Dump the configs
+      cli_command:
+          command: "admin display-config"
+      register: temp_var
+    - name: Extract characters
+      set_fact:
+        timestamp: "{{ now() | regex_replace('^(.{10}) (.{5}).*$', '\\1-\\2')  }}"
+    - name: Extract characters2
+      set_fact:
+        filename: "sros_config-{{timestamp}}"
+    - name: Print new filename
+      debug:
+        var: filename
+    - name: Delete "- " and "'" from the sides and redirect to a file named "conf"
+      copy:
+        content: "{{ temp_var.stdout_lines | map('regex_replace', '^[\\-f]', '') | list | join('\n') }}"
+        dest:  /root/{{ filename }}
+    - name: Send the output to the file server
+      # shell: smbclient //10.85.17.120/share -c "put /root/conf"
+      # shell: scp /root/{{ filename }} muzo@10.85.17.114:/home/muzo 
+      shell: curl -T /root/{{ filename }}  http://10.85.18.183:7070/ciq_files/muzo/upload/
+
+
+
+
