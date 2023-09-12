@@ -1,0 +1,12 @@
+{
+  "artifacts": [
+    {
+      "name": "postcheck.yaml",
+      "type": "main_yml_file"
+    },
+    {
+      "name": "variables.yml",
+      "type": "input_parameters"
+    }
+  ]
+}
