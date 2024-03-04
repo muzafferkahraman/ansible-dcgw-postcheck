@@ -1,4 +1,4 @@
-Z---
+---
 - hosts: localhost
   connection: network_cli
   gather_facts: true
